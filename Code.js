@@ -50,6 +50,7 @@ function handleAction(payload) {
   if (action === 'addPrepItem') return respondWithData(addPrepItem(data));
   if (action === 'deletePrepItem') return respondWithData(deletePrepItem(data));
   if (action === 'addSiteHistory') return respondWithData(addSiteHistory(data));
+  if (action === 'deleteSiteHistory') return respondWithData(deleteSiteHistory(data));
 
   // スタッフマスタ
   if (action === 'getStaffList') return respondWithData(getStaffList());
@@ -346,7 +347,16 @@ function getAllSitesMaster() {
       primeContact: String(row['元請担当者名・連絡先'] || ""),
       fireManager: String(row['防火管理者'] || ""),
       attendant: String(row['立会者'] || ""),
-      submitter: String(row['届出者'] || "")
+      submitter: String(row['届出者'] || ""),
+      history: (function() {
+        var raw = String(row['現場履歴'] || '[]');
+        try {
+          var arr = JSON.parse(raw);
+          return arr.map(function(h, i) {
+            return { id: i, date: h.date || '', author: h.author || '', text: h.text || '' };
+          });
+        } catch(e) { return []; }
+      })()
     };
   });
   return mappedData;
@@ -647,6 +657,42 @@ function addSiteHistory(data) {
   return { success: true, history: returnHists };
 }
 
+function deleteSiteHistory(data) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('案件マスタ');
+  if(!sheet) throw new Error("案件マスタシートがありません");
+
+  var masterData = getSheetDataAsObjects('案件マスタ');
+  var targetRow = null;
+  for (var i = 0; i < masterData.length; i++) {
+    if (masterData[i]['案件ID'] === data.caseId) {
+      targetRow = masterData[i];
+      break;
+    }
+  }
+  if (!targetRow) throw new Error("案件IDが見つかりません: " + data.caseId);
+
+  var headersRow = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var colIdx = headersRow.indexOf('現場履歴');
+  if (colIdx === -1) throw new Error("現場履歴列が見つかりません");
+
+  var existingRaw = sheet.getRange(targetRow._rowIndex, colIdx + 1).getValue() || '[]';
+  var histArray = [];
+  try { histArray = JSON.parse(existingRaw); } catch(e) { histArray = []; }
+
+  // 指定されたインデックスの履歴を削除
+  var deleteIndex = data.historyIndex;
+  if (deleteIndex < 0 || deleteIndex >= histArray.length) {
+    throw new Error("無効な履歴インデックスです: " + deleteIndex);
+  }
+  histArray.splice(deleteIndex, 1);
+
+  sheet.getRange(targetRow._rowIndex, colIdx + 1).setValue(JSON.stringify(histArray));
+
+  var returnHists = histArray.map(function(h, i) {
+    return { id: i, date: h.date || '', author: h.author || '', text: h.text || '' };
+  });
+  return { success: true, history: returnHists };
+}
 
 // =====================================================================
 // ====== 校正機器管理システム API（新規追加） ======
