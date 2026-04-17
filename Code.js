@@ -182,8 +182,10 @@ function getTodaySites() {
       sealDetails: m['シール内訳・詳細'] || "",
       salesRep: m['営業担当者'] || "",
       clientContact: m['客先担当者'] || "",
+      clientContactPhone: m['客先担当者電話番号'] || "",
       primeContractor: m['元請会社名'] || "",
       primeContact: m['元請担当者名・連絡先'] || "",
+      primeContactPhone: m['元請担当者電話番号'] || "",
       fireManager: m['防火管理者'] || "",
       attendant: m['立会者'] || "",
       submitter: m['届出者'] || ""
@@ -230,8 +232,10 @@ function saveSiteDetails(data) {
 
     if (data.salesRep !== undefined) safeSetValue(sheet, row, headersRow, '営業担当者', data.salesRep || "", missingHeaders);
     if (data.clientContact !== undefined) safeSetValue(sheet, row, headersRow, '客先担当者', data.clientContact || "", missingHeaders);
+    if (data.clientContactPhone !== undefined) safeSetValue(sheet, row, headersRow, '客先担当者電話番号', data.clientContactPhone || "", missingHeaders);
     if (data.primeContractor !== undefined) safeSetValue(sheet, row, headersRow, '元請会社名', data.primeContractor || "", missingHeaders);
     if (data.primeContact !== undefined) safeSetValue(sheet, row, headersRow, '元請担当者名・連絡先', data.primeContact || "", missingHeaders);
+    if (data.primeContactPhone !== undefined) safeSetValue(sheet, row, headersRow, '元請担当者電話番号', data.primeContactPhone || "", missingHeaders);
     if (data.fireManager !== undefined) safeSetValue(sheet, row, headersRow, '防火管理者', data.fireManager || "", missingHeaders);
     if (data.attendant !== undefined) safeSetValue(sheet, row, headersRow, '立会者', data.attendant || "", missingHeaders);
     if (data.submitter !== undefined) safeSetValue(sheet, row, headersRow, '届出者', data.submitter || "", missingHeaders);
@@ -305,10 +309,14 @@ function addSiteMaster(data) {
   if (salesRepIdx !== -1) newRow[salesRepIdx] = data.salesRep || "";
   var clientContactIdx = headersRow.indexOf('客先担当者');
   if (clientContactIdx !== -1) newRow[clientContactIdx] = data.clientContact || "";
+  var clientContactPhoneIdx = headersRow.indexOf('客先担当者電話番号');
+  if (clientContactPhoneIdx !== -1) newRow[clientContactPhoneIdx] = data.clientContactPhone || "";
   var primeContractorIdx = headersRow.indexOf('元請会社名');
   if (primeContractorIdx !== -1) newRow[primeContractorIdx] = data.primeContractor || "";
   var primeContactIdx = headersRow.indexOf('元請担当者名・連絡先');
   if (primeContactIdx !== -1) newRow[primeContactIdx] = data.primeContact || "";
+  var primeContactPhoneIdx = headersRow.indexOf('元請担当者電話番号');
+  if (primeContactPhoneIdx !== -1) newRow[primeContactPhoneIdx] = data.primeContactPhone || "";
   var fireManagerIdx = headersRow.indexOf('防火管理者');
   if (fireManagerIdx !== -1) newRow[fireManagerIdx] = data.fireManager || "";
   var attendantIdx = headersRow.indexOf('立会者');
@@ -344,8 +352,10 @@ function getAllSitesMaster() {
       sealDetails: String(row['シール内訳・詳細'] || ""),
       salesRep: String(row['営業担当者'] || ""),
       clientContact: String(row['客先担当者'] || ""),
+      clientContactPhone: String(row['客先担当者電話番号'] || ""),
       primeContractor: String(row['元請会社名'] || ""),
       primeContact: String(row['元請担当者名・連絡先'] || ""),
+      primeContactPhone: String(row['元請担当者電話番号'] || ""),
       fireManager: String(row['防火管理者'] || ""),
       attendant: String(row['立会者'] || ""),
       submitter: String(row['届出者'] || ""),
@@ -412,8 +422,10 @@ function updateSiteMaster(data) {
 
   safeSetValue(sheet, targetRowIdx, headers, '営業担当者', data.salesRep || "", missingHeaders);
   safeSetValue(sheet, targetRowIdx, headers, '客先担当者', data.clientContact || "", missingHeaders);
+  safeSetValue(sheet, targetRowIdx, headers, '客先担当者電話番号', data.clientContactPhone || "", missingHeaders);
   safeSetValue(sheet, targetRowIdx, headers, '元請会社名', data.primeContractor || "", missingHeaders);
   safeSetValue(sheet, targetRowIdx, headers, '元請担当者名・連絡先', data.primeContact || "", missingHeaders);
+  safeSetValue(sheet, targetRowIdx, headers, '元請担当者電話番号', data.primeContactPhone || "", missingHeaders);
   safeSetValue(sheet, targetRowIdx, headers, '防火管理者', data.fireManager || "", missingHeaders);
   safeSetValue(sheet, targetRowIdx, headers, '立会者', data.attendant || "", missingHeaders);
   safeSetValue(sheet, targetRowIdx, headers, '届出者', data.submitter || "", missingHeaders);
