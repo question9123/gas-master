@@ -56,6 +56,7 @@ function handleAction(payload) {
   if (action === 'getStaffList') return respondWithData(getStaffList());
   if (action === 'addStaffMember') return respondWithData(addStaffMember(data));
   if (action === 'updateStaffMember') return respondWithData(updateStaffMember(data));
+  if (action === 'deleteStaffMember') return respondWithData(deleteStaffMember(data));
 
   // 校正機器管理
   if (action === 'getAllCalibrationData') return respondWithData(getAllCalibrationData());
@@ -1268,4 +1269,23 @@ function updateStaffMember(data) {
   if (data.notes !== undefined) safeSetValue(sheet, targetRow, headers, '備考', data.notes, missingHeaders);
   
   return { success: true, updatedId: data.id };
+}
+
+function deleteStaffMember(data) {
+  var sheet = ensureStaffHeaders();
+  var values = sheet.getDataRange().getValues();
+  var headers = values[0];
+  var idIdx = headers.indexOf('社員ID');
+  
+  var targetRow = -1;
+  for (var i = 1; i < values.length; i++) {
+    if (String(values[i][idIdx]) === String(data.id)) {
+      targetRow = i + 1;
+      break;
+    }
+  }
+  if (targetRow === -1) throw new Error('社員IDが見つかりません: ' + data.id);
+  
+  sheet.deleteRow(targetRow);
+  return { success: true, deletedId: data.id };
 }
