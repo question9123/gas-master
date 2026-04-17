@@ -417,6 +417,11 @@ function updateSiteMaster(data) {
   safeSetValue(sheet, targetRowIdx, headers, '立会者', data.attendant || "", missingHeaders);
   safeSetValue(sheet, targetRowIdx, headers, '届出者', data.submitter || "", missingHeaders);
 
+  // 現場履歴の保存（フロントからhistory配列が送られてきた場合）
+  if (data.history !== undefined) {
+    safeSetValue(sheet, targetRowIdx, headers, '現場履歴', JSON.stringify(data.history), missingHeaders);
+  }
+
   if (missingHeaders.length > 0) {
     console.warn("見つからなかった見出し:", missingHeaders);
   }
